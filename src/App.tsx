@@ -1,0 +1,99 @@
+import { useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { Login } from "./pages/Login";
+import { Overview } from "./pages/Overview";
+import { Contacts } from "./pages/Contacts";
+import { ContactDetail } from "./pages/ContactDetail";
+import { BuyerMessages } from "./pages/BuyerMessages";
+import { BuyerMessageDetail } from "./pages/BuyerMessageDetail";
+import { VendorMessages } from "./pages/VendorMessages";
+import { VendorMessageDetail } from "./pages/VendorMessageDetail";
+import { CommissionChange } from "./pages/CommissionChange";
+import { Waitlist } from "./pages/Waitlist";
+import { WaitlistDetail } from "./pages/WaitlistDetail";
+import { VendorSignups } from "./pages/VendorSignups";
+import { VendorSignupDetail } from "./pages/VendorSignupDetail";
+import { BuyerSignups } from "./pages/BuyerSignups";
+import { BuyerSignupDetail } from "./pages/BuyerSignupDetail";
+import { BusinessCategories } from "./pages/BusinessCategories";
+import { CreateBusinessCategory } from "./pages/CreateBusinessCategory";
+import { BusinessCategoryDetail } from "./pages/BusinessCategoryDetail";
+import { ProductCategories } from "./pages/ProductCategories";
+import { CreateProductCategory } from "./pages/CreateProductCategory";
+import { ProductCategoryDetail } from "./pages/ProductCategoryDetail";
+import { DashboardLayout } from "./components/Layout/DashboardLayout";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { useAuthStore } from "./stores/authStore";
+import { useAuthCheck } from "./hooks/useAuthCheck";
+import { Toast } from "./components/ui/Toast";
+import OrdersPage from "./pages/Orders";
+
+function App() {
+  const { initializeAuth } = useAuthStore();
+
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
+
+  // Use the auth check hook to monitor token expiry
+  useAuthCheck();
+
+  return (
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Overview />} />
+          <Route path="contacts" element={<Contacts />} />
+          <Route path="contacts/:id" element={<ContactDetail />} />
+          <Route path="buyer-messages" element={<BuyerMessages />} />
+          <Route path="buyer-messages/:id" element={<BuyerMessageDetail />} />
+          <Route path="vendor-messages" element={<VendorMessages />} />
+          <Route path="vendor-messages/:id" element={<VendorMessageDetail />} />
+          <Route path="commission-change" element={<CommissionChange />} />
+          <Route path="waitlist" element={<Waitlist />} />
+          <Route path="orders" element={<OrdersPage />} />
+          <Route path="waitlist/:id" element={<WaitlistDetail />} />
+          <Route path="vendor-signups" element={<VendorSignups />} />
+          <Route path="vendor-signups/:id" element={<VendorSignupDetail />} />
+          <Route path="buyer-signups" element={<BuyerSignups />} />
+          <Route path="buyer-signups/:id" element={<BuyerSignupDetail />} />
+          <Route path="business-categories" element={<BusinessCategories />} />
+          <Route
+            path="business-categories/create"
+            element={<CreateBusinessCategory />}
+          />
+          <Route
+            path="business-categories/:id"
+            element={<BusinessCategoryDetail />}
+          />
+          <Route path="product-categories" element={<ProductCategories />} />
+          <Route
+            path="product-categories/create"
+            element={<CreateProductCategory />}
+          />
+          <Route
+            path="product-categories/:id"
+            element={<ProductCategoryDetail />}
+          />
+        </Route>
+      </Routes>
+      <Toast />
+    </Router>
+  );
+}
+
+export default App;

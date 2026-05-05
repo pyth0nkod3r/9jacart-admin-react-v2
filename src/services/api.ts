@@ -48,7 +48,7 @@ class ApiService {
   // Mock login - accepts any credentials
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     await simulateDelay({}, 500);
-    
+
     // Build a structurally-valid JWT (header.payload.signature) so jwt-decode
     // can parse it and the token-expiry checks in authStore don't immediately
     // log the user back out. Expires in 24h.
@@ -420,18 +420,18 @@ class ApiService {
     return { status: 200, error: false, message: "Category deleted successfully", data: undefined as never };
   }
 
-  async updateCommission(_data: { commissionRate: number }): Promise<ApiResponse<void>> {
+  async updateCommission(_data: { platformShare: number }): Promise<ApiResponse<{ message: string }>> {
     await simulateDelay({});
-    return { status: 200, error: false, message: "Commission rate updated successfully", data: undefined as never };
+    return { status: 200, error: false, message: "Commission rate updated successfully", data: { message: "Commission rate updated successfully" } };
   }
 
-  async getCommission(): Promise<ApiResponse<{ commissionRate: number }>> {
+  async getCommission(): Promise<ApiResponse<{ platformCommission: string }>> {
     await simulateDelay({});
-    return { status: 200, error: false, message: "Success", data: { commissionRate: 5.0 } };
+    return { status: 200, error: false, message: "Success", data: { platformCommission: "5.0" } };
   }
 
   // Tickets
-  async getTickets(page: number = 1, perPage: number = 10, search?: string): Promise<TicketsResponse> {
+  async getTickets(page: number = 1, perPage: number = 10, search?: string): Promise<{ data: TicketsResponse }> {
     await simulateDelay({});
     let filteredTickets = [...mockTickets];
 
@@ -443,40 +443,44 @@ class ApiService {
 
     const paginated = paginate(filteredTickets, page, perPage);
     return {
-      tickets: paginated.data as unknown as Ticket[],
-      pagination: paginated.pagination,
+      data: {
+        tickets: paginated.data as unknown as Ticket[],
+        pagination: paginated.pagination,
+      },
     };
   }
 
-  async getTicketMessages(ticketId: string): Promise<TicketMessagesResponse> {
+  async getTicketMessages(ticketId: string): Promise<{ data: TicketMessagesResponse }> {
     await simulateDelay({});
     return {
-      messages: [
-        { 
-          messageId: "msg-1", 
-          ticketId,
-          message: "Initial ticket message", 
-          messageType: "TEXT",
-          senderType: "BUYER",
-          senderId: "user-1",
-          senderInfo: { id: "user-1", name: "John Doe", email: "john@example.com", type: "BUYER" },
-          isOwnMessage: false,
-          isRead: true,
-          createdAt: new Date().toISOString() 
-        },
-        { 
-          messageId: "msg-2", 
-          ticketId,
-          message: "Support response", 
-          messageType: "TEXT",
-          senderType: "ADMIN",
-          senderId: "admin-1",
-          senderInfo: { id: "admin-1", name: "Admin", email: "admin@adminhub.com", type: "ADMIN" },
-          isOwnMessage: true,
-          isRead: true,
-          createdAt: new Date().toISOString() 
-        },
-      ],
+      data: {
+        messages: [
+          {
+            messageId: "msg-1",
+            ticketId,
+            message: "Initial ticket message",
+            messageType: "TEXT",
+            senderType: "BUYER",
+            senderId: "user-1",
+            senderInfo: { id: "user-1", name: "John Doe", email: "john@example.com", type: "BUYER" },
+            isOwnMessage: false,
+            isRead: true,
+            createdAt: new Date().toISOString()
+          },
+          {
+            messageId: "msg-2",
+            ticketId,
+            message: "Support response",
+            messageType: "TEXT",
+            senderType: "ADMIN",
+            senderId: "admin-1",
+            senderInfo: { id: "admin-1", name: "Admin", email: "admin@adminhub.com", type: "ADMIN" },
+            isOwnMessage: true,
+            isRead: true,
+            createdAt: new Date().toISOString()
+          },
+        ],
+      },
     };
   }
 

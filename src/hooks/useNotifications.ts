@@ -4,7 +4,6 @@ import type {
   CategoryCount,
   NotificationCounts,
   NotificationItem,
-  TicketsResponse,
   VendorSignup,
 } from "@/types/api";
 
@@ -62,7 +61,7 @@ export function useNotifications() {
       // Paginate through all tickets to ensure counts are accurate
       while (page <= totalPages) {
         const response = await apiService.getTickets(page, perPage);
-        const ticketsData = response as TicketsResponse | undefined;
+        const ticketsData = response.data;
 
         if (!ticketsData || !Array.isArray(ticketsData.tickets)) {
           break;
